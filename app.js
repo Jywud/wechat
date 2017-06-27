@@ -22,11 +22,20 @@ io.on('connection', function(socket){
 
   console.log(socket.handshake.address);
 
+  //文本信息
   socket.on('message', function(msg){
     console.log('message: ' + msg);
     // socket.emit('message', 'server！！！');
     socket.broadcast.emit('message', msg); //发送给除了自己的其他人
   });
+
+  //base64图片
+  socket.on('base64', function(msg){
+    // console.log('base64: ' + msg);
+    // socket.emit('message', 'server！！！');
+    socket.broadcast.emit('base64', msg); //发送给除了自己的其他人
+  });
+
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });

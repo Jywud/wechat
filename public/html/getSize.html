@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <input id="file" type="file">  
+  <input id="Button1" type="button" value="button">  
+</body>
+<script> 
+document.getElementById("Button1").addEventListener("click", function() {
+  getImageBase64String("file", function(base64) {
+    var image = new Image();  
+    image.onload=function(){  
+        var width = image.width;  
+        var height = image.height;  
+        alert(width+'======'+height);  
+    };  
+    image.src= base64;
+  });
+}, false);
+
+//根据file的id获取base64
+function getImageBase64String(id, callback) {
+  var input = document.getElementById(id);
+  if(input.files) {
+    //读取图片数据  
+    var f = input.files[0];  
+    var reader = new FileReader();
+    reader.onload = function (e) {  
+        callback(e.target.result);  
+          
+    };  
+    reader.readAsDataURL(f);  
+  }
+} 
+</script> 
+</html>
+
+
+ 
