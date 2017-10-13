@@ -18,30 +18,30 @@ app.use(cookieParser());
 app.use('/', routes);
 
 //socketIO
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
 
-  console.log(socket.handshake.address);
+    console.log(socket.handshake.address + "--" + socket.handshake.time);
 
-  //文本信息
-  socket.on('message', function(msg){
-    console.log('message: ' + msg);
-    // socket.emit('message', 'server！！！');
-    socket.broadcast.emit('message', msg); //发送给除了自己的其他人
-  });
+    //文本信息
+    socket.on('message', function(msg) {
+        console.log('message: ' + msg);
+        // socket.emit('message', 'server！！！');
+        socket.broadcast.emit('message', msg); //发送给除了自己的其他人
+    });
 
-  //base64图片
-  socket.on('base64', function(msg){
-    // console.log('base64: ' + msg);
-    // socket.emit('message', 'server！！！');
-    socket.broadcast.emit('base64', msg); //发送给除了自己的其他人
-  });
+    //base64图片
+    socket.on('base64', function(msg) {
+        // console.log('base64: ' + msg);
+        // socket.emit('message', 'server！！！');
+        socket.broadcast.emit('base64', msg); //发送给除了自己的其他人
+    });
 
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-  });
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+    });
 
 });
 
-http.listen(app.get('port'), function () {
-    console.log('You can debug your app with http://localhost:' + app.get('port'));    
+http.listen(app.get('port'), function() {
+    console.log('You can debug your app with http://localhost:' + app.get('port'));
 });

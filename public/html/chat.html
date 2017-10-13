@@ -1,198 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-	<style type="text/css">
-		*{
-			padding: 0;
-			margin: 0;
-			box-sizing: border-box;
-		}
-		html,body{
-			height: 100%;
-		}
-		ul,li{
-			list-style: none;
-		}
-		.title{			
-			font-weight: bold;
-			padding: 10px;
-			text-align: center;
-		}
-		#main{
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-		.inputPan{
-			display: flex;
-			padding: 10px;
-		}
-		#inputText{			
-    		padding: 5px;
-			width: 100%;
-		}
-		.inputText-wrap{
-			flex: 1;
-		}
-		.sendMsg, .clearMsg, .chooseImage{			
-			cursor: pointer;
-			width: 60px;
-			padding: 5px;
-			text-align: center;
-			color: #fff;
-		}
-		.chooseImage{
-			position: relative;
-			margin-right: 2px;
-			background-color: green;
-		}
-		.sendMsg{
-			margin-right: 2px;
-			background-color: blue;			
-		}
-		.clearMsg{
-			background-color: orange;
-		}
-		.msgBox{
-			flex: 1;
-			border: 1px solid #ebebeb;			
-			overflow: auto;
-			margin: 0 10px 10px;
-			padding: 5px;
-		}
-		.msgBox ul li{
-			word-break: break-all;
-			text-align: left;
-			padding: 4px;
-		}
-		.msgBox ul li.li-self{
-			text-align: right;
-		}
-		.base64{
-			max-width: 100px;
-		}
-		.msgBox ul li .name-me{
-			color: green;
-		}
-		.msgBox ul li .name-other{
-			color: blue;
-		}
-		#file{
-			opacity: 0;
-			position: absolute;
-			z-index: 999;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-		}
-
-
-	</style>
-	<title>we chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        html,
+        body {
+            height: 100%;
+        }
+        
+        ul,
+        li {
+            list-style: none;
+        }
+        
+        .title {
+            font-weight: bold;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        #main {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .inputPan {
+            display: flex;
+            padding: 10px;
+        }
+        
+        #inputText {
+            padding: 5px;
+            width: 100%;
+        }
+        
+        .inputText-wrap {
+            flex: 1;
+        }
+        
+        .sendMsg,
+        .clearMsg,
+        .chooseImage {
+            cursor: pointer;
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .chooseImage {
+            position: relative;
+            margin-right: 2px;
+            background-color: green;
+        }
+        
+        .sendMsg {
+            margin-right: 2px;
+            background-color: blue;
+        }
+        
+        .clearMsg {
+            background-color: orange;
+        }
+        
+        .msgBox {
+            flex: 1;
+            border: 1px solid #ebebeb;
+            overflow: auto;
+            margin: 0 10px 10px;
+            padding: 5px;
+        }
+        
+        .msgBox ul li {
+            word-break: break-all;
+            text-align: left;
+            padding: 4px;
+        }
+        
+        .msgBox ul li.li-self {
+            text-align: right;
+        }
+        
+        .base64 {
+            max-width: 100px;
+        }
+        
+        .msgBox ul li .name-me {
+            color: green;
+        }
+        
+        .msgBox ul li .name-other {
+            color: blue;
+        }
+        
+        #file {
+            opacity: 0;
+            position: absolute;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <title>we chat</title>
 </head>
+
 <body>
-	<div id="main">
-		<div class="title">WeChat</div>
-		<div class="msgBox">
-			<ul>			
-			</ul>
-		</div>
-		<div class="inputPan">
-			<div class="inputText-wrap">
-				<input type="text" placeholder="输入聊天信息" id="inputText">
-			</div>
-			<div class="sendMsg">发送</div>
-			<div class="chooseImage"><input id="file" type="file" accept="image/*" >图片</div>
-			<div class="clearMsg">清空</div>
-		</div>
-	</div>
-	
-	<script src="/public/javascripts/socket.io.js"></script>
-	<script src="/public/javascripts/jquery.js"></script>
-	<script type="text/javascript">
-		$(function() {
-			var socket = io('http://192.168.152.43:8083');
-			socket.on('connect', function(){
-				// alert('已连接聊天服务器');
-			});
-			//文本信息
-			socket.on('message', function(data){				
-				$('.msgBox ul').append('<li><span class="name-other">(大家)</span> '+data+'</li>');
-				scollToBottom();
-				
-			});
-			//base64
-			socket.on('base64', function(data){				
-				$('.msgBox ul').append('<li><span class="name-other">(大家)</span><img class="base64" src="'+ data +'"/></li>');
-				scollToBottom();
-				
-			});
-  			socket.on('disconnect', function(){
-  				// alert('断开聊天服务');
-  			});
+    <div id="main">
+        <div class="title">WeChat</div>
+        <div class="msgBox">
+            <ul>
+            </ul>
+        </div>
+        <div class="inputPan">
+            <div class="inputText-wrap">
+                <input type="text" placeholder="输入聊天信息" id="inputText">
+            </div>
+            <div class="sendMsg">发送</div>
+            <div class="chooseImage"><input id="file" type="file" accept="image/*">图片</div>
+            <div class="clearMsg">清空</div>
+        </div>
+    </div>
 
-  			//根据file的id获取base64
-			function getImageBase64String(id, callback) {
-			  var input = document.getElementById(id);
-			  if(input.files) {
-			    //读取图片数据  
-			    var f = input.files[0];  
-			    var reader = new FileReader();
-			    reader.onload = function (e) {  
-			        callback(e.target.result);  
-			          
-			    };  
-			    reader.readAsDataURL(f);  
-			  }
-			}
+    <script src="/public/javascripts/socket.io.js"></script>
+    <script src="/public/javascripts/vue.js"></script>
+    <script src="/public/javascripts/jquery.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var socket = io('http://192.168.152.43:8083');
+            socket.on('connect', function() {
+                // alert('已连接聊天服务器');
+            });
+            //文本信息
+            socket.on('message', function(data) {
+                $('.msgBox ul').append('<li><span class="name-other">(大家)</span> ' + data + '</li>');
+                scollToBottom();
 
-  			//信心框滚动到底部
-  			function scollToBottom () {
-  				$(".msgBox").scrollTop($(".msgBox")[0].scrollHeight - $(".msgBox").height());
-  			}
-  			//发送消息
-  			function sendMsg() {
-  				var msg = $('#inputText').val();
-  				if(msg == '') {
-  					return;
-  				}
-  				$('.msgBox ul').append('<li class="li-self">'+ msg +' <span class="name-me">(我)</span></li>'); 
-  				scollToBottom(); 
-  				$('#inputText').val('');				
-  				socket.emit('message', msg);
-  			}
-  			//显示图片
-  			function showImage(base64) {
-  				$('.msgBox ul').append('<li class="li-self"><img class="base64" src="'+ base64 +'"/><span class="name-me">(我)</span></li>');
-  				scollToBottom();
-  				socket.emit('base64', base64);
-  			}
+            });
+            //base64
+            socket.on('base64', function(data) {
+                $('.msgBox ul').append('<li><span class="name-other">(大家)</span><img class="base64" src="' + data + '"/></li>');
+                scollToBottom();
 
-  			//回车发送信息
-  			$('#inputText').on('keydown', function(e) {
-  				var ev= window.event || e;				
-				if (ev.keyCode == 13) {				
-				   sendMsg();
-				}
-  			});
-  			
-  			//发送信息
-  			$('.sendMsg').on('click', sendMsg);
+            });
+            socket.on('disconnect', function() {
+                // alert('断开聊天服务');
+            });
 
-  			$('#file').on('change', function() {
-  				getImageBase64String('file', function(base64) {
-  					console.log(base64);
-  					showImage(base64);
-  				});
-  			});
-  			//清空聊天列表
-  			$('.clearMsg').on('click', function() {
-  				$('.msgBox ul').empty();
-  			})
-		});
-	</script>
+            //根据file的id获取base64
+            function getImageBase64String(id, callback) {
+                var input = document.getElementById(id);
+                if (input.files) {
+                    //读取图片数据  
+                    var f = input.files[0];
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        callback(e.target.result);
+
+                    };
+                    reader.readAsDataURL(f);
+                }
+            }
+
+            //信心框滚动到底部
+            function scollToBottom() {
+                $(".msgBox").scrollTop($(".msgBox")[0].scrollHeight - $(".msgBox").height());
+            }
+            //发送消息
+            function sendMsg() {
+                var msg = $('#inputText').val();
+                if (msg == '') {
+                    return;
+                }
+                $('.msgBox ul').append('<li class="li-self">' + msg + ' <span class="name-me">(我)</span></li>');
+                scollToBottom();
+                $('#inputText').val('');
+                socket.emit('message', msg);
+            }
+            //显示图片
+            function showImage(base64) {
+                $('.msgBox ul').append('<li class="li-self"><img class="base64" src="' + base64 + '"/><span class="name-me">(我)</span></li>');
+                scollToBottom();
+                socket.emit('base64', base64);
+            }
+
+            //回车发送信息
+            $('#inputText').on('keydown', function(e) {
+                var ev = window.event || e;
+                if (ev.keyCode == 13) {
+                    sendMsg();
+                }
+            });
+
+            //发送信息
+            $('.sendMsg').on('click', sendMsg);
+
+            $('#file').on('change', function() {
+                getImageBase64String('file', function(base64) {
+                    console.log(base64);
+                    showImage(base64);
+                });
+            });
+            //清空聊天列表
+            $('.clearMsg').on('click', function() {
+                $('.msgBox ul').empty();
+            })
+        });
+    </script>
 </body>
+
 </html>

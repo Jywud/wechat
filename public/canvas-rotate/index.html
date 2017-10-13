@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<button onclick="rotate()">旋转90度</button>
+<img id="img1" width="300">
+<!-- <canvas id="canvasId" width="400" height="400"></canvas> -->
+<script type="text/javascript">
+var myCanvas = document.createElement('canvas');
+myCanvas.width = 400;
+myCanvas.height = 400;   
+
+var canvasW = myCanvas.width;
+var canvasH = myCanvas.height;
+var ctx = myCanvas.getContext("2d");
+
+var img = new Image();
+var angle = 0;
+
+img.onload = function (){
+    var imgW = img.width;
+    var imgH = img.height;    
+    ctx.drawImage(img, canvasW/2-img.width/2, canvasH/2-img.height/2, canvasW/1.4, (canvasW)*imgH/(imgW*1.4));
+    var fUrl = myCanvas.toDataURL('image/png', 0.8);
+    document.getElementById('img1').src = fUrl;   
+    fUrl = null;
+}
+img.src = "idCardF.png";
+
+function rotate() {
+    var imgW = img.width;
+    var imgH = img.height;    
+	angle += 90;
+
+    ctx.clearRect(0, 0, canvasW, myCanvas.height); //清除画布
+    ctx.save();//保存状态
+    ctx.translate(canvasW/2, canvasH/2);
+    ctx.rotate(angle*Math.PI/180);
+    ctx.translate(-canvasW/2, -canvasH/2);
+    ctx.drawImage(img, canvasW/2-img.width/2, canvasH/2-img.height/2,  canvasW/1.4, (canvasW)*imgH/(imgW*1.4));
+    ctx.restore();//恢复状态
+    var fUrl = myCanvas.toDataURL('image/png', 0.8);
+    document.getElementById('img1').src = fUrl;   
+    fUrl = null;
+}
+</script>
+</body>
+</html>

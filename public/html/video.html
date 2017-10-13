@@ -16,21 +16,38 @@
     var video = document.getElementById("video");
     var context = canvas.getContext("2d");
 
-    var errocb = function() {
-        console.log('sth wrong!');
+    var errBack = function() {
+        console.log('error!');
     }
 
-    navigator.webkitGetUserMedia({
-        video: true
-    }, function(stream) {
-        video.src = window.webkitURL.createObjectURL(stream);
-        video.play();
-    }, errocb);
-    
+    //获得摄像头并显示到video区域  
+    var videoObj = {  
+        "video" : true  
+    };
+    if (navigator.webkitGetUserMedia) {
+        navigator.webkitGetUserMedia(videoObj, function(stream) {  
+            video.src = window.webkitURL.createObjectURL(stream);  
+            video.play();  
+        }, errBack);
+          
+    } else if (navigator.getUserMedia) {
+        navigator.getUserMedia(videoObj, function(stream) {  
+            video.src = stream;  
+            video.play();  
+        }, errBack);
+    } else if (navigator.mozGetUserMedia) {
+        navigator.mozGetUserMedia(videoObj, function(stream) {  
+            video.src = window.URL.createObjectURL(stream);  
+            video.play();  
+        }, errBack);  
+    } else {
+        alert('不支持视频拍照');
+    }
 
     document.getElementById("picture").addEventListener("click", function() {
         context.drawImage(video, 0, 0, 640, 480);
-    });
+    }, false);
+
     </script>
 </body>
 

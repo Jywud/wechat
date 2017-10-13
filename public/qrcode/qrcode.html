@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <div id="qrcode"></div>
+    <img src="" id="codeImage">
+    <script type="text/javascript" src="qrcode.min.js"></script>
+    <script>
+        var qrcodeDom = document.getElementById('qrcode')
+        var qrCode = new QRCode(qrcodeDom, {
+            width: 160, 
+            height: 160
+        });
+        
+        qrCode.makeCode("http://192.168.152.43:3000");
+
+        setTimeout(function() {                
+            var codeUrl = qrcodeDom.lastChild.src;
+            var readyCount = 0;
+            var myCanvas = document.createElement('canvas');
+            myCanvas.width = 160;
+            myCanvas.height = 160;                
+            var ctx = myCanvas.getContext("2d");
+
+            var codeImage =  new Image();
+            var logoImage = new Image();
+            
+            codeImage.onload = function() {                    
+                ctx.drawImage(codeImage, 0, 0, 160, 160);
+                readyCount ++;
+                if(readyCount == 2) {
+                    var fUrl = myCanvas.toDataURL('image/png');
+                    document.getElementById('codeImage').src = fUrl;   
+                }
+            };
+            logoImage.onload = function() {
+                ctx.drawImage(logoImage, 60, 60, 40, 40);
+                readyCount ++;
+                if(readyCount == 2) {
+                    var fUrl = myCanvas.toDataURL('image/png');
+                    document.getElementById('codeImage').src = fUrl;   
+                }
+            };  
+            codeImage.src = codeUrl;
+            logoImage.src = 'HS.png';                           
+            
+        }, 0);
+        
+    </script>
+</body>
+</html>
